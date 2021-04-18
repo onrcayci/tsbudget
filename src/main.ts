@@ -1,5 +1,15 @@
 import { BudgetEntry } from "./models/budget-entry";
 
-const entry: BudgetEntry = new BudgetEntry("New Title", 100, "CAD", true);
+let entry: BudgetEntry = new BudgetEntry({
+    title: "New Title",
+    amount: 100,
+    currency: "USD",
+    recurring: true
+});
+
 console.log("Budget App!")
-console.log(entry);
+entry.save();
+entry.update({
+    title: "Budget App",
+    amount: 200
+});

@@ -1,18 +1,5 @@
-import { FileHandle, open } from "fs/promises";
+import { existsSync, readFileSync, writeFileSync } from "fs";
 
-/**
- * Budget Entry Model.
- * 
- * This model is used to persist entries to the budget tracking application.
- * 
- * @param title: string Short descriptor of the entry.
- * @param description: string Long description o f the entry.
- * @param amount: number Number to represent the amount spent/earned.
- * @param currency: string Currency of the amount spent/earned.
- * @param date: string Date that the transaction occured.
- * @param recurring: boolean Indicates whether the transaction occurs
- * every month.
- */
 export class BudgetEntry {
 
     title: string;
@@ -22,34 +9,77 @@ export class BudgetEntry {
     date?: string;
     recurring: boolean;
 
-    constructor(
-        title: string,
-        amount: number,
-        currency: string,
-        recurring: boolean,
-        description?: string,
-        date?: string
-    ) {
-        this.title = title;
-        this.description = description;
-        this.amount = amount;
-        this.currency = currency;
-        this.date = date;
-        this.recurring = recurring;
+    constructor(entry: BudgetEntryInterface) {
+        this.title = entry.title;
+        this.description = entry.description;
+        this.amount = entry.amount;
+        this.currency = entry.currency;
+        this.date = entry.date;
+        this.recurring = entry.recurring;
     };
 
-    async save() {
-        const saveFile: FileHandle = await open("save_file.json", "w+");
-        if (saveFile) {
-            const savedEntriesBuffer: string = await saveFile.readFile({ encoding: "utf8" });
+    save() {
+        try {
             let savedEntries: BudgetEntry[];
-            if (savedEntriesBuffer === "") savedEntries = [];
-            else savedEntries = JSON.parse(savedEntriesBuffer);
+            if (existsSync("save_file.json")) {
+                const savedEntriesBuffer: string = readFileSync("save_file.json", { encoding: "utf8" });
+                savedEntries = this._parseEntries(JSON.parse(savedEntriesBuffer));
+            } else {
+                savedEntries = [];
+            }
             savedEntries.push(this);
-            await saveFile.writeFile(JSON.stringify(savedEntries));
-            await saveFile.close();
-        } else {
-            throw new Error("Cannot save the given entry into the save file!");
+            writeFileSync("save_file.json", JSON.stringify(savedEntries));
+        } catch (error) {
+            throw error;
         }
     }
+
+    update(update: {
+        title?: string,
+        description?: string,
+        amount?: number,
+        currency?: string,
+        date?: string,
+        recurring?: boolean
+    }) {
+        try {
+            if (existsSync("save_file.json")) {
+                const savedEntriesBuffer: string = readFileSync("save_file.json", { encoding: "utf8" });
+                let savedEntries: BudgetEntry[] = this._parseEntries(JSON.parse(savedEntriesBuffer));
+                savedEntries.forEach((entry) => {
+                    if (entry.title === this.title) {
+                        entry.title = update.title ? update.title : entry.title;
+                        entry.description = update.description ? update.description : entry.description;
+                        entry.amount = update.amount ? update.amount : entry.amount;
+                        entry.currency = update.currency ? update.currency : entry.currency;
+                        entry.date = update.date ? update.date : entry.date;
+                        entry.recurring = update.recurring ? update.recurring : entry.recurring;
+                    }
+                });
+                writeFileSync("save_file.json", JSON.stringify(savedEntries));
+            } else {
+                throw new Error("Entry is not saved!");
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    _parseEntries(parsedEntries: BudgetEntryInterface[]): BudgetEntry[] {
+        let entries: BudgetEntry[] = [];
+        parsedEntries.forEach((entry: BudgetEntryInterface) => {
+            let budgetEntry: BudgetEntry = new BudgetEntry(entry);
+            entries.push(budgetEntry);
+        });
+        return entries;
+    }
+}
+
+interface BudgetEntryInterface {
+    title: string;
+    description?: string;
+    amount: number;
+    currency: string;
+    date?: string;
+    recurring: boolean;
 }
