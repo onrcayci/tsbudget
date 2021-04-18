@@ -29,12 +29,22 @@ test("Successfully create an instance of BudgetEntry class", () => {
 
 test("Successfully save a created BudgetEntry instance", () => {
     testEntry.save();
-    const savedEntry: BudgetEntry[] = JSON.parse(readFileSync("save_file.json", { encoding: "utf8" }));
-    expect(savedEntry.length).toEqual(1);
-    expect(savedEntry[0].title).toEqual("Test Entry");
-    expect(savedEntry[0].description).toBeUndefined();
-    expect(savedEntry[0].amount).toEqual(100);
-    expect(savedEntry[0].currency).toEqual("CAD");
-    expect(savedEntry[0].date).toBeUndefined();
-    expect(savedEntry[0].recurring).toBeFalsy();
+    const savedEntries: BudgetEntry[] = JSON.parse(readFileSync("save_file.json", { encoding: "utf8" }));
+    expect(savedEntries.length).toEqual(1);
+    expect(savedEntries[0].title).toEqual("Test Entry");
+    expect(savedEntries[0].description).toBeUndefined();
+    expect(savedEntries[0].amount).toEqual(100);
+    expect(savedEntries[0].currency).toEqual("CAD");
+    expect(savedEntries[0].date).toBeUndefined();
+    expect(savedEntries[0].recurring).toBeFalsy();
+});
+
+test("Sucessfully update a saved BudgetEntry instance", () => {
+    testEntry.update({
+        title: "Updated Title"
+    });
+    const savedEntries: BudgetEntry[] = JSON.parse(readFileSync("save_file.json", { encoding: "utf8" }));
+    expect(savedEntries.length).toEqual(1);
+    expect(savedEntries[0].title).toEqual("Updated Title");
+    expect(testEntry.title).toEqual("Updated Title");
 });

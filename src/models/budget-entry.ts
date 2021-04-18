@@ -23,7 +23,7 @@ export class BudgetEntry {
             let savedEntries: BudgetEntry[];
             if (existsSync("save_file.json")) {
                 const savedEntriesBuffer: string = readFileSync("save_file.json", { encoding: "utf8" });
-                savedEntries = this._parseEntries(JSON.parse(savedEntriesBuffer));
+                savedEntries = this.parseEntries(JSON.parse(savedEntriesBuffer));
             } else {
                 savedEntries = [];
             }
@@ -45,7 +45,7 @@ export class BudgetEntry {
         try {
             if (existsSync("save_file.json")) {
                 const savedEntriesBuffer: string = readFileSync("save_file.json", { encoding: "utf8" });
-                let savedEntries: BudgetEntry[] = this._parseEntries(JSON.parse(savedEntriesBuffer));
+                let savedEntries: BudgetEntry[] = this.parseEntries(JSON.parse(savedEntriesBuffer));
                 savedEntries.forEach((entry) => {
                     if (entry.title === this.title) {
                         entry.title = update.title ? update.title : entry.title;
@@ -57,6 +57,13 @@ export class BudgetEntry {
                     }
                 });
                 writeFileSync("save_file.json", JSON.stringify(savedEntries));
+                this.title = update.title ? update.title : this.title;
+                this.description = update.description ? update.description : this.description;
+                this.amount = update.amount ? update.amount : this.amount;
+                this.currency = update.currency ? update.currency : this.currency;
+                this.date = update.date ? update.date : this.date;
+                this.recurring = update.recurring ? update.recurring : this.recurring;
+
             } else {
                 throw new Error("Entry is not saved!");
             }
@@ -65,7 +72,7 @@ export class BudgetEntry {
         }
     }
 
-    _parseEntries(parsedEntries: BudgetEntryInterface[]): BudgetEntry[] {
+    private parseEntries(parsedEntries: BudgetEntryInterface[]): BudgetEntry[] {
         let entries: BudgetEntry[] = [];
         parsedEntries.forEach((entry: BudgetEntryInterface) => {
             let budgetEntry: BudgetEntry = new BudgetEntry(entry);
