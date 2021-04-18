@@ -1,9 +1,19 @@
-import { FileHandle, open } from "fs/promises";
+import { FileHandle, open,rm } from "fs/promises";
+import { existsSync } from "fs";
 
 import { BudgetEntry } from "../../src/models/budget-entry";
 
+let  testEntry: BudgetEntry;
+
+beforeAll(() => {
+    testEntry = new BudgetEntry("Test Entry", 100, "CAD", false);
+})
+
+afterAll(async () => {
+    if (existsSync("save_file.json")) await rm("save_file.json");
+});
+
 test("Successfully create an instance of BudgetEntry class", () => {
-    const testEntry: BudgetEntry = new BudgetEntry("Test Entry", 100, "CAD", false);
     expect(testEntry).toBeInstanceOf(BudgetEntry);
     expect(testEntry.title).toEqual("Test Entry");
     expect(testEntry.description).toBeUndefined();
@@ -14,7 +24,6 @@ test("Successfully create an instance of BudgetEntry class", () => {
 });
 
 test("Successfully save a created BudgetEntry instance", async () => {
-    const testEntry: BudgetEntry = new BudgetEntry("Test Entry", 100, "CAD", false);
     await testEntry.save();
     const saveFile: FileHandle = await open("save_file.json", "r");
     const savedEntry: BudgetEntry[] = JSON.parse(await saveFile.readFile({ encoding: "utf8" }));
