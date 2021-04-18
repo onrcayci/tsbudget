@@ -1,7 +1,10 @@
+import { FileHandle, open } from "fs/promises";
+
 /**
  * Budget Entry Model.
  * 
  * This model is used to persist entries to the budget tracking application.
+ * 
  * @param title: string Short descriptor of the entry.
  * @param description: string Long description o f the entry.
  * @param amount: number Number to represent the amount spent/earned.
@@ -11,6 +14,7 @@
  * every month.
  */
 export class BudgetEntry {
+
     title: string;
     description?: string;
     amount: number;
@@ -33,4 +37,19 @@ export class BudgetEntry {
         this.date = date;
         this.recurring = recurring;
     };
+
+    async save() {
+        const saveFile: FileHandle = await open("save_file.json", "w+");
+        if (saveFile) {
+            const savedEntriesBuffer: string = await saveFile.readFile({ encoding: "utf8" });
+            let savedEntries: BudgetEntry[];
+            if (savedEntriesBuffer === "") savedEntries = [];
+            else savedEntries = JSON.parse(savedEntriesBuffer);
+            savedEntries.push(this);
+            await saveFile.writeFile(JSON.stringify(savedEntries));
+            await saveFile.close();
+        } else {
+            throw new Error("Cannot save the given entry into the save file!");
+        }
+    }
 }
