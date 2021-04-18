@@ -1,16 +1,20 @@
-import { FileHandle, open,rm } from "fs/promises";
-import { existsSync } from "fs";
+import { existsSync, readFileSync, rmSync } from "fs";
 
 import { BudgetEntry } from "../../src/models/budget-entry";
 
 let  testEntry: BudgetEntry;
 
 beforeAll(() => {
-    testEntry = new BudgetEntry("Test Entry", 100, "CAD", false);
-})
+    testEntry = new BudgetEntry({
+        title: "Test Entry",
+        amount: 100,
+        currency: "CAD",
+        recurring: false
+    });
+});
 
-afterAll(async () => {
-    if (existsSync("save_file.json")) await rm("save_file.json");
+afterAll(() => {
+    if (existsSync("save_file.json")) rmSync("save_file.json");
 });
 
 test("Successfully create an instance of BudgetEntry class", () => {
@@ -23,11 +27,9 @@ test("Successfully create an instance of BudgetEntry class", () => {
     expect(testEntry.recurring).toBeFalsy();
 });
 
-test("Successfully save a created BudgetEntry instance", async () => {
-    await testEntry.save();
-    const saveFile: FileHandle = await open("save_file.json", "r");
-    const savedEntry: BudgetEntry[] = JSON.parse(await saveFile.readFile({ encoding: "utf8" }));
-    await saveFile.close();
+test("Successfully save a created BudgetEntry instance", () => {
+    testEntry.save();
+    const savedEntry: BudgetEntry[] = JSON.parse(readFileSync("save_file.json", { encoding: "utf8" }));
     expect(savedEntry.length).toEqual(1);
     expect(savedEntry[0].title).toEqual("Test Entry");
     expect(savedEntry[0].description).toBeUndefined();
