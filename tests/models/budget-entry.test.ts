@@ -40,11 +40,10 @@ test("Successfully save a created BudgetEntry instance", () => {
 });
 
 test("Sucessfully update a saved BudgetEntry instance", () => {
-    testEntry.update({
+    BudgetEntry.update(testEntry.title, {
         title: "Updated Title"
     });
     const savedEntries: BudgetEntry[] = JSON.parse(readFileSync("save_file.json", { encoding: "utf8" }));
     expect(savedEntries.length).toEqual(1);
     expect(savedEntries[0].title).toEqual("Updated Title");
-    expect(testEntry.title).toEqual("Updated Title");
 });

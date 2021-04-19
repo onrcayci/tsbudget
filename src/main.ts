@@ -9,7 +9,7 @@ let entry: BudgetEntry = new BudgetEntry({
 
 console.log("Budget App!")
 entry.save();
-entry.update({
+BudgetEntry.update("New Title", {
     title: "Budget App",
     amount: 200
 });
