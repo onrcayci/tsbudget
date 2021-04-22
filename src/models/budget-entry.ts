@@ -1,9 +1,10 @@
 import { existsSync, readFileSync, writeFileSync } from "fs";
 
+import { printTable } from "console-table-printer";
+
 export class BudgetEntry {
 
     title: string;
-    description?: string;
     amount: number;
     currency: string;
     date?: string;
@@ -11,7 +12,6 @@ export class BudgetEntry {
 
     constructor(entry: BudgetEntryInterface) {
         this.title = entry.title;
-        this.description = entry.description;
         this.amount = entry.amount;
         this.currency = entry.currency;
         this.date = entry.date;
@@ -37,7 +37,6 @@ export class BudgetEntry {
         entryTitle: string,
         update: {
             title?: string,
-            description?: string,
             amount?: number,
             currency?: string,
             date?: string,
@@ -57,6 +56,29 @@ export class BudgetEntry {
         }
     }
 
+    static delete(entryTitle: string): void {
+        try {
+            if (existsSync("save_file.json")) {
+                let savedEntries: BudgetEntry[] = this.parseEntries();
+                savedEntries = savedEntries.filter((entry) => entry.title !== entryTitle);
+                writeFileSync("save_file.json", JSON.stringify(savedEntries, null, "\t"));
+            } else {
+                throw new Error("Entry is not saved!");
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static list(): void {
+        try {
+            const savedEntries: BudgetEntry[] = this.parseEntries();
+            printTable(savedEntries);
+        } catch (error) {
+            throw error;
+        }
+    }
+
     private static parseEntries(): BudgetEntry[] {
         let entries: BudgetEntry[] = [];
         const parsedEntries: BudgetEntryInterface[] = JSON.parse(readFileSync("save_file.json", { encoding: "utf8" }));
@@ -71,14 +93,12 @@ export class BudgetEntry {
         entry: BudgetEntry | BudgetEntryInterface, 
         update: {
             title?: string,
-            description?: string,
             amount?: number,
             currency?: string,
             date?: string,
             recurring?: boolean
     }): void {
         entry.title = update.title ? update.title : entry.title;
-        entry.description = update.description ? update.description : entry.description;
         entry.amount = update.amount ? update.amount : entry.amount;
         entry.currency = update.currency ? update.currency : entry.currency;
         entry.date = update.date ? update.date : entry.date;
@@ -88,7 +108,6 @@ export class BudgetEntry {
 
 interface BudgetEntryInterface {
     title: string;
-    description?: string;
     amount: number;
     currency: string;
     date?: string;

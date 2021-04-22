@@ -20,7 +20,6 @@ afterAll(() => {
 test("Successfully create an instance of BudgetEntry class", () => {
     expect(testEntry).toBeInstanceOf(BudgetEntry);
     expect(testEntry.title).toEqual("Test Entry");
-    expect(testEntry.description).toBeUndefined();
     expect(testEntry.amount).toEqual(100);
     expect(testEntry.currency).toEqual("CAD");
     expect(testEntry.date).toBeUndefined();
@@ -32,7 +31,6 @@ test("Successfully save a created BudgetEntry instance", () => {
     const savedEntries: BudgetEntry[] = JSON.parse(readFileSync("save_file.json", { encoding: "utf8" }));
     expect(savedEntries.length).toEqual(1);
     expect(savedEntries[0].title).toEqual("Test Entry");
-    expect(savedEntries[0].description).toBeUndefined();
     expect(savedEntries[0].amount).toEqual(100);
     expect(savedEntries[0].currency).toEqual("CAD");
     expect(savedEntries[0].date).toBeUndefined();
