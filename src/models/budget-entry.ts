@@ -4,6 +4,8 @@ import { printTable } from "console-table-printer";
 
 // TODO: Implement method to display each month's balance
 // TODO: Implement method to list each month's entries
+// TODO: Add docstring and comments for documentation
+// TODO: Unit tests and test coverage!
 export class BudgetEntry {
 
     title: string;
