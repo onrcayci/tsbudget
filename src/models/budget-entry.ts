@@ -2,6 +2,8 @@ import { existsSync, readFileSync, writeFileSync } from "fs";
 
 import { printTable } from "console-table-printer";
 
+// TODO: Implement method to display each month's balance
+// TODO: Implement method to list each month's entries
 export class BudgetEntry {
 
     title: string;
