@@ -122,4 +122,24 @@ yargs.command("delete <entry>", "Delete the entry with the given title", (yargs)
     }
 });
 
+// balance command
+yargs.command("balance [currency]", "Show the total expenses", (yargs) => {
+    return yargs
+        .positional("balance", {
+            type: "string",
+            demandOption: true
+        })
+        .positional("currency", {
+            type: "string",
+            default: "CAD"
+        });
+}, (argv) => {
+    try {
+        const expense: number = BudgetEntry.balance();
+        console.log("Total Outstanding Expenses: " + expense + " " + argv.currency);
+    } catch (error) {
+        throw error;
+    }
+});
+
 yargs.parse();

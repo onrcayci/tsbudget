@@ -81,6 +81,17 @@ export class BudgetEntry {
         }
     }
 
+    static balance(): number {
+        try {
+            const savedEntries: BudgetEntry[] = this.parseEntries();
+            let totalExpense: number = 0;
+            savedEntries.forEach((entry) => totalExpense += entry.amount);
+            return totalExpense;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     private static parseEntries(): BudgetEntry[] {
         let entries: BudgetEntry[] = [];
         const parsedEntries: BudgetEntryInterface[] = JSON.parse(readFileSync("save_file.json", { encoding: "utf8" }));
