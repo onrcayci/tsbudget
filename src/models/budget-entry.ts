@@ -1,11 +1,8 @@
 import { existsSync, readFileSync, writeFileSync } from "fs";
 
-import { printTable } from "console-table-printer";
-
 // TODO: Implement method to display each month's balance
 // TODO: Implement method to list each month's entries
 // TODO: Add docstring and comments for documentation
-// TODO: Unit tests and test coverage!
 export class BudgetEntry {
 
     title: string;
@@ -74,10 +71,10 @@ export class BudgetEntry {
         }
     }
 
-    static list(): void {
+    static list(): BudgetEntry[] {
         try {
-            const savedEntries: BudgetEntry[] = this.parseEntries();
-            printTable(savedEntries);
+            if (existsSync("save_file.json")) return this.parseEntries();
+            else throw new Error("There are no saved entries!");
         } catch (error) {
             throw error;
         }
@@ -85,10 +82,14 @@ export class BudgetEntry {
 
     static balance(): number {
         try {
-            const savedEntries: BudgetEntry[] = this.parseEntries();
-            let totalExpense: number = 0;
-            savedEntries.forEach((entry) => totalExpense += entry.amount);
-            return totalExpense;
+            if (existsSync("save_file.json")) {
+                const savedEntries: BudgetEntry[] = this.parseEntries();
+                let totalExpense: number = 0;
+                savedEntries.forEach((entry) => totalExpense += entry.amount);
+                return totalExpense;
+            } else {
+                throw new Error("There are no saved entries!");
+            }
         } catch (error) {
             throw error;
         }
