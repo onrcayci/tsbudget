@@ -1,4 +1,5 @@
 import yargs from "yargs";
+import { printTable } from "console-table-printer";
 
 import { BudgetEntry } from "./models/budget-entry";
 
@@ -100,7 +101,8 @@ yargs.command("list", "List all of the entries", (yargs) => {
     });
 }, () => {
     try {
-        BudgetEntry.list();
+        const entries: BudgetEntry[] = BudgetEntry.list();
+        printTable(entries);
     } catch (error) {
         throw error;
     }
