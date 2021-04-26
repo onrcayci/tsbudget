@@ -2,7 +2,6 @@ import { existsSync, readFileSync, writeFileSync } from "fs";
 
 // TODO: Implement method to display each month's balance
 // TODO: Implement method to list each month's entries
-// TODO: Add docstring and comments for documentation
 export class BudgetEntry {
 
     title: string;
@@ -11,6 +10,10 @@ export class BudgetEntry {
     date?: string;
     recurring: boolean;
 
+    /**
+     * @constructor
+     * @param {BudgetEntryInterface} entry
+     */
     constructor(entry: BudgetEntryInterface) {
         this.title = entry.title;
         this.amount = entry.amount;
@@ -19,6 +22,9 @@ export class BudgetEntry {
         this.recurring = entry.recurring;
     };
 
+    /**
+     * Save a BudgetEntry instance into a JSON save file.
+     */
     save(): void {
         try {
             let savedEntries: BudgetEntry[];
@@ -34,6 +40,17 @@ export class BudgetEntry {
         }
     }
 
+    /**
+     * @static
+     * Update the details of a saved BudgetEntry instance
+     * @param {string} entryTitle 
+     * @param update - A JSON object which includes updates for:
+     * @param {string | undefined} update.title
+     * @param {number | undefined} update.amount
+     * @param {string | undefined} update.currency
+     * @param {string | undefined} update.date
+     * @param {boolean | undefined} update.recurring
+     */
     static update(
         entryTitle: string,
         update: {
@@ -57,6 +74,11 @@ export class BudgetEntry {
         }
     }
 
+    /**
+     * @static
+     * Delete a BudgetEntry instance by its title.
+     * @param {string} entryTitle
+     */
     static delete(entryTitle: string): void {
         try {
             if (existsSync("save_file.json")) {
@@ -71,6 +93,11 @@ export class BudgetEntry {
         }
     }
 
+    /**
+     * @static
+     * Return a list of all of the saved BudgetEntry instances.
+     * @returns {BudgetEntry[]} - Array of BudgetEntry instances.
+     */
     static list(): BudgetEntry[] {
         try {
             if (existsSync("save_file.json")) return this.parseEntries();
@@ -80,6 +107,11 @@ export class BudgetEntry {
         }
     }
 
+    /**
+     * @static
+     * Return the total amount of all of the saved BudgetEntry instances.
+     * @returns {number} - the total amount of all of the entries.
+     */
     static balance(): number {
         try {
             if (existsSync("save_file.json")) {
@@ -95,6 +127,12 @@ export class BudgetEntry {
         }
     }
 
+    /**
+     * @private
+     * @static
+     * Convert the saved JSON entries into BudgetEntry instances.
+     * @returns {BudgetEntry[]} - A list of saved BudgetEntry instances.
+     */
     private static parseEntries(): BudgetEntry[] {
         let entries: BudgetEntry[] = [];
         const parsedEntries: BudgetEntryInterface[] = JSON.parse(readFileSync("save_file.json", { encoding: "utf8" }));
@@ -105,6 +143,18 @@ export class BudgetEntry {
         return entries;
     }
 
+    /**
+     * @private
+     * @static
+     * Update the attributes of a given BudgetEntry instance.
+     * @param {BudgetEntry | BudgetEntryInterface} entry 
+     * @param update
+     * @param {string | undefined} update.title
+     * @param {number | undefined} update.amount
+     * @param {string | undefined} update.currency
+     * @param {string | undefined} update.date
+     * @param {boolean | undefined} update.recurring
+     */
     private static updateEntry(
         entry: BudgetEntry | BudgetEntryInterface, 
         update: {

@@ -3,11 +3,12 @@ import { printTable } from "console-table-printer";
 
 import { BudgetEntry } from "./models/budget-entry";
 
+// version of the CLI app
 yargs.version("0.0.b1");
 
-// add command
+// CLI command for the add functionality
 yargs.command(
-    "add <title> <amount> <currency> <recurring>",
+    "add <title> <amount> <currency> <recurring> [date]",
     "Add a budget entry to the application",
     (yargs) => {
         return yargs
@@ -51,8 +52,8 @@ yargs.command(
     }
 );
 
-// update command
-yargs.command("update <entry>", "Update an existing entry", (yargs) => {
+// CLI command for the update functionality
+yargs.command("update <entry> [title] [amount] [currency] [date] [recurring]", "Update an existing entry", (yargs) => {
     return yargs
         .positional("entry",{
             type: "string",
@@ -93,7 +94,7 @@ yargs.command("update <entry>", "Update an existing entry", (yargs) => {
     }
 });
 
-// list command
+// CLI command for list functionality
 yargs.command("list", "List all of the entries", (yargs) => {
     return yargs.positional("list", {
         type: "string",
@@ -108,7 +109,7 @@ yargs.command("list", "List all of the entries", (yargs) => {
     }
 });
 
-// delete command
+// CLI command for delete functionality
 yargs.command("delete <entry>", "Delete the entry with the given title", (yargs) => {
     return yargs
         .positional("entry", {
@@ -124,7 +125,7 @@ yargs.command("delete <entry>", "Delete the entry with the given title", (yargs)
     }
 });
 
-// balance command
+// CLI command for balance functionality
 yargs.command("balance [currency]", "Show the total expenses", (yargs) => {
     return yargs
         .positional("balance", {
@@ -144,4 +145,5 @@ yargs.command("balance [currency]", "Show the total expenses", (yargs) => {
     }
 });
 
+// parse the incoming CLI arguments in order to determine which CLI command to execute
 yargs.parse();
