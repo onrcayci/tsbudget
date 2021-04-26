@@ -95,16 +95,16 @@ yargs.command("update <entry> [title] [amount] [currency] [date] [recurring]", "
 });
 
 // CLI command for list functionality
-yargs.command("list [yearMonth]", "List all of the entries or entries belong to a specific time period", (yargs) => {
+yargs.command("list [time]", "List all of the entries or entries belong to a specific time period", (yargs) => {
     return yargs
-        .option("yearMonth", {
+        .option("time", {
             type: "string",
-            describe: "Year and month of the time period"
+            describe: "Year and month of the time period. The accepted style is 'Year Month', e.g. '2000 January'."
         });
 }, (argv) => {
     try {
         let entries: BudgetEntry[] = [];
-        if (argv.yearMonth) entries = BudgetEntry.listByMonth(argv.yearMonth);
+        if (argv.time) entries = BudgetEntry.listByMonth(argv.time);
         else entries = BudgetEntry.list();
         printTable(entries);
     } catch (error) {
@@ -129,16 +129,26 @@ yargs.command("delete <entry>", "Delete the entry with the given title", (yargs)
 });
 
 // CLI command for balance functionality
-yargs.command("balance [currency]", "Show the total expenses", (yargs) => {
+yargs.command("balance [currency] [time]", "Show the total expenses", (yargs) => {
     return yargs
-        .positional("currency", {
+        .option("currency", {
             type: "string",
             default: "CAD"
+        })
+        .option("time", {
+            type: "string",
+            describe: "Year and month of the time period. The accepted style is 'Year Month', e.g. '2000 January'."
         });
 }, (argv) => {
     try {
-        const expense: number = BudgetEntry.balance();
-        console.log("Total Outstanding Expenses: " + expense + " " + argv.currency);
+        let expense = 0;
+        if (argv.time) {
+            expense = BudgetEntry.balanceByMonth(argv.time);
+            console.log("Total Outstanding Expenses of " + argv.time + ": " + expense + " " + argv.currency);
+        } else {
+            expense = BudgetEntry.balance();
+            console.log("Total Outstanding Expenses: " + expense + " " + argv.currency);
+        }
     } catch (error) {
         throw error;
     }

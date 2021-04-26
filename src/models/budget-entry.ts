@@ -149,6 +149,19 @@ export class BudgetEntry {
     }
 
     /**
+     * @static
+     * Return the up-to-date balance of the specified time period.
+     * @param {string} yearMonth - The year and the month of the time period.
+     * @returns {number} - The total amount of the entries in the specified time period.
+     */
+    static balanceByMonth(yearMonth: string): number {
+        const entries: BudgetEntry[] = this.listByMonth(yearMonth);
+        let monthlyExpense = 0;
+        entries.forEach((entry) => monthlyExpense += entry.amount);
+        return monthlyExpense;
+    }
+
+    /**
      * @private
      * @static
      * Convert the saved JSON entries into BudgetEntry instances.
