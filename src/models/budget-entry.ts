@@ -127,6 +127,21 @@ export class BudgetEntry {
         }
     }
 
+    static listByMonth(yearMonth: string): BudgetEntry[] {
+        const queryPeriod = new Date(yearMonth + "1");
+        let entries: BudgetEntry[] = this.parseEntries().filter((entry) => {
+            if (entry.date) {
+                const entryDate = new Date(entry.date);
+                return (
+                    entryDate.getFullYear() === queryPeriod.getFullYear() && entryDate.getMonth() === queryPeriod.getMonth()
+                );
+            } else {
+                return entry.recurring == true;
+            }
+        });
+        return entries;
+    }
+
     /**
      * @private
      * @static

@@ -95,14 +95,17 @@ yargs.command("update <entry> [title] [amount] [currency] [date] [recurring]", "
 });
 
 // CLI command for list functionality
-yargs.command("list", "List all of the entries", (yargs) => {
-    return yargs.positional("list", {
-        type: "string",
-        demandOption: true
-    });
-}, () => {
+yargs.command("list [yearMonth]", "List all of the entries or entries belong to a specific time period", (yargs) => {
+    return yargs
+        .option("yearMonth", {
+            type: "string",
+            describe: "Year and month of the time period"
+        });
+}, (argv) => {
     try {
-        const entries: BudgetEntry[] = BudgetEntry.list();
+        let entries: BudgetEntry[] = [];
+        if (argv.yearMonth) entries = BudgetEntry.listByMonth(argv.yearMonth);
+        else entries = BudgetEntry.list();
         printTable(entries);
     } catch (error) {
         throw error;
@@ -128,10 +131,6 @@ yargs.command("delete <entry>", "Delete the entry with the given title", (yargs)
 // CLI command for balance functionality
 yargs.command("balance [currency]", "Show the total expenses", (yargs) => {
     return yargs
-        .positional("balance", {
-            type: "string",
-            demandOption: true
-        })
         .positional("currency", {
             type: "string",
             default: "CAD"
