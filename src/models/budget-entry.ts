@@ -127,6 +127,12 @@ export class BudgetEntry {
         }
     }
 
+    /**
+     * @static
+     * Return a list of entries that are in the specified time period.
+     * @param {string} yearMonth - The year and the month of the time period. 
+     * @returns {BudgetEntry[]} - The list of entries in the specified time period.
+     */
     static listByMonth(yearMonth: string): BudgetEntry[] {
         const queryPeriod = new Date(yearMonth + "1");
         let entries: BudgetEntry[] = this.parseEntries().filter((entry) => {
