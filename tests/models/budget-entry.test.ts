@@ -9,7 +9,8 @@ beforeAll(() => {
         title: "Test Entry",
         amount: 100,
         currency: "CAD",
-        recurring: false
+        recurring: false,
+        date: "2021-02-01"
     });
 });
 
@@ -22,7 +23,7 @@ test("Successfully create an instance of BudgetEntry class", () => {
     expect(testEntry.title).toEqual("Test Entry");
     expect(testEntry.amount).toEqual(100);
     expect(testEntry.currency).toEqual("CAD");
-    expect(testEntry.date).toBeUndefined();
+    expect(testEntry.date).toEqual("2021-02-01");
     expect(testEntry.recurring).toBeFalsy();
 });
 
@@ -33,7 +34,7 @@ test("Successfully save a created BudgetEntry instance", () => {
     expect(savedEntries[0].title).toEqual("Test Entry");
     expect(savedEntries[0].amount).toEqual(100);
     expect(savedEntries[0].currency).toEqual("CAD");
-    expect(savedEntries[0].date).toBeUndefined();
+    expect(savedEntries[0].date).toEqual("2021-02-01");
     expect(savedEntries[0].recurring).toBeFalsy();
 });
 
@@ -48,7 +49,7 @@ test("Sucessfully update a saved BudgetEntry instance", () => {
 });
 
 test("Fail to update a BudgetEntry which is not saved", () => {
-    expect(() => BudgetEntry.update(testEntry.title, { title: "Updated Title" })).toThrow("Entry is not saved!");
+    expect(() => BudgetEntry.update(testEntry.title, { title: "Updated Title" })).toThrow("There are no saved entries!");
 })
 
 test("Successfully delete a saved BudgetEntry instance", () => {
@@ -59,7 +60,7 @@ test("Successfully delete a saved BudgetEntry instance", () => {
 });
 
 test("Fail to delete a BudgetEntry which is not saved", () => {
-    expect(() => BudgetEntry.delete(testEntry.title)).toThrow("Entry is not saved!");
+    expect(() => BudgetEntry.delete(testEntry.title)).toThrow("There are no saved entries!");
 });
 
 test("Successfully list all saved BudgetEntry instances", () => {
@@ -81,4 +82,15 @@ test("Successfully return the current total expense", () => {
 
 test("Fail to return the current total expense due to not having a save file", () => {
     expect(() => { BudgetEntry.balance() }).toThrow("There are no saved entries!");
+});
+
+test("Successfully list all of the entries from a given year and month", () => {
+    testEntry.save();
+    const entries: BudgetEntry[] = BudgetEntry.listByMonth("2021-02");
+    expect(entries.length).toEqual(1);
+    expect(entries[0].date).toEqual(testEntry.date);
+});
+
+test("Fail to return the list of all entries from a given year and month to due not having a save file", () => {
+    expect(() => (BudgetEntry.listByMonth("2021-02"))).toThrow("There are no saved entries!");
 });

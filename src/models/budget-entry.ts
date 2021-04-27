@@ -61,14 +61,10 @@ export class BudgetEntry {
             recurring?: boolean
     }): void {
         try {
-            if (existsSync("save_file.json")) {
-                let savedEntries: BudgetEntry[] = this.parseEntries();
-                let oldSavedEntry: BudgetEntry | undefined = savedEntries.find((entry) => entry.title === entryTitle);
-                if (oldSavedEntry) this.updateEntry(oldSavedEntry, update);
-                writeFileSync("save_file.json", JSON.stringify(savedEntries, null, "\t"));
-            } else {
-                throw new Error("Entry is not saved!");
-            }
+            let savedEntries: BudgetEntry[] = this.parseEntries();
+            let oldSavedEntry: BudgetEntry | undefined = savedEntries.find((entry) => entry.title === entryTitle);
+            if (oldSavedEntry) this.updateEntry(oldSavedEntry, update);
+            writeFileSync("save_file.json", JSON.stringify(savedEntries, null, "\t"));
         } catch (error) {
             throw error;
         }
@@ -81,13 +77,9 @@ export class BudgetEntry {
      */
     static delete(entryTitle: string): void {
         try {
-            if (existsSync("save_file.json")) {
-                let savedEntries: BudgetEntry[] = this.parseEntries();
-                savedEntries = savedEntries.filter((entry) => entry.title !== entryTitle);
-                writeFileSync("save_file.json", JSON.stringify(savedEntries, null, "\t"));
-            } else {
-                throw new Error("Entry is not saved!");
-            }
+            let savedEntries: BudgetEntry[] = this.parseEntries();
+            savedEntries = savedEntries.filter((entry) => entry.title !== entryTitle);
+            writeFileSync("save_file.json", JSON.stringify(savedEntries, null, "\t"));
         } catch (error) {
             throw error;
         }
@@ -100,8 +92,7 @@ export class BudgetEntry {
      */
     static list(): BudgetEntry[] {
         try {
-            if (existsSync("save_file.json")) return this.parseEntries();
-            else throw new Error("There are no saved entries!");
+            return this.parseEntries();
         } catch (error) {
             throw error;
         }
@@ -114,14 +105,10 @@ export class BudgetEntry {
      */
     static balance(): number {
         try {
-            if (existsSync("save_file.json")) {
-                const savedEntries: BudgetEntry[] = this.parseEntries();
-                let totalExpense: number = 0;
-                savedEntries.forEach((entry) => totalExpense += entry.amount);
-                return totalExpense;
-            } else {
-                throw new Error("There are no saved entries!");
-            }
+            const savedEntries: BudgetEntry[] = this.parseEntries();
+            let totalExpense: number = 0;
+            savedEntries.forEach((entry) => totalExpense += entry.amount);
+            return totalExpense;
         } catch (error) {
             throw error;
         }
@@ -134,18 +121,22 @@ export class BudgetEntry {
      * @returns {BudgetEntry[]} - The list of entries in the specified time period.
      */
     static listByMonth(yearMonth: string): BudgetEntry[] {
-        const queryPeriod = new Date(yearMonth + "1");
-        let entries: BudgetEntry[] = this.parseEntries().filter((entry) => {
-            if (entry.date) {
-                const entryDate = new Date(entry.date);
-                return (
-                    entryDate.getFullYear() === queryPeriod.getFullYear() && entryDate.getMonth() === queryPeriod.getMonth()
-                );
-            } else {
-                return entry.recurring == true;
-            }
-        });
-        return entries;
+        try {
+            const queryPeriod = new Date(yearMonth + "-01");
+            let entries: BudgetEntry[] = this.parseEntries().filter((entry) => {
+                if (entry.date) {
+                    const entryDate = new Date(entry.date);
+                    return (
+                        entryDate.getFullYear() === queryPeriod.getFullYear() && entryDate.getMonth() === queryPeriod.getMonth()
+                    );
+                } else {
+                    return entry.recurring == true;
+                }
+            });
+            return entries;
+        } catch (error) {
+            throw error;
+        }
     }
 
     /**
@@ -155,10 +146,15 @@ export class BudgetEntry {
      * @returns {number} - The total amount of the entries in the specified time period.
      */
     static balanceByMonth(yearMonth: string): number {
-        const entries: BudgetEntry[] = this.listByMonth(yearMonth);
-        let monthlyExpense = 0;
-        entries.forEach((entry) => monthlyExpense += entry.amount);
-        return monthlyExpense;
+        try {
+            const entries: BudgetEntry[] = this.listByMonth(yearMonth);
+            let monthlyExpense = 0;
+            entries.forEach((entry) => monthlyExpense += entry.amount);
+            return monthlyExpense;
+        } catch (error) {
+            throw error;
+        }
+
     }
 
     /**
@@ -168,13 +164,17 @@ export class BudgetEntry {
      * @returns {BudgetEntry[]} - A list of saved BudgetEntry instances.
      */
     private static parseEntries(): BudgetEntry[] {
+        if (existsSync("save_file.json")) {
         let entries: BudgetEntry[] = [];
-        const parsedEntries: BudgetEntryInterface[] = JSON.parse(readFileSync("save_file.json", { encoding: "utf8" }));
-        parsedEntries.forEach((entry: BudgetEntryInterface) => {
-            let budgetEntry: BudgetEntry = new BudgetEntry(entry);
-            entries.push(budgetEntry);
-        });
-        return entries;
+            const parsedEntries: BudgetEntryInterface[] = JSON.parse(readFileSync("save_file.json", { encoding: "utf8" }));
+            parsedEntries.forEach((entry: BudgetEntryInterface) => {
+                let budgetEntry: BudgetEntry = new BudgetEntry(entry);
+                entries.push(budgetEntry);
+            });
+            return entries;
+        } else {
+            throw new Error("There are no saved entries!");
+        }
     }
 
     /**
