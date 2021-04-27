@@ -2,7 +2,11 @@
   "name": "budget_ts",
   "version": "0.0.1",
   "description": "",
-  "main": "src/main.ts",
+  "main": "bin/src/main.js",
+  "preferGlobal": true,
+  "bin": {
+    "budgetapp": "bin/src/main.js"
+  },
   "scripts": {
     "test": "jest",
     "start": "ts-node src/main.ts",
