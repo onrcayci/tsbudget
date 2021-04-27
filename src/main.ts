@@ -34,7 +34,7 @@ yargs.command(
             })
             .option("date", {
                 type: "string",
-                describe: "Date of the entry"
+                describe: "Date of the entry as a UTC string. E.g. 2021-01-01."
             });
     }, (argv) => {
         const newEntry = new BudgetEntry({
@@ -74,7 +74,7 @@ yargs.command("update <entry> [title] [amount] [currency] [date] [recurring]", "
         })
         .option("date", {
             type: "string",
-            describe: "New date of the entry"
+            describe: "New date of the entry as a UTC string. E.g. 2021-01-01."
         })
         .option("recurring", {
             type: "boolean",
@@ -99,7 +99,7 @@ yargs.command("list [time]", "List all of the entries or entries belong to a spe
     return yargs
         .option("time", {
             type: "string",
-            describe: "Year and month of the time period. The accepted style is 'Year Month', e.g. '2000 January'."
+            describe: "Year and month of the time period in UTC format. E.g. 2021-01 for 2021 January."
         });
 }, (argv) => {
     try {
@@ -137,7 +137,7 @@ yargs.command("balance [currency] [time]", "Show the total expenses", (yargs) =>
         })
         .option("time", {
             type: "string",
-            describe: "Year and month of the time period. The accepted style is 'Year Month', e.g. '2000 January'."
+            describe: "Year and month of the time period in UTC format. E.g. 2021-01 for 2021 January."
         });
 }, (argv) => {
     try {
