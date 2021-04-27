@@ -71,7 +71,7 @@ test("Successfully list all saved BudgetEntry instances", () => {
 });
 
 test("Fail to list BudgetEntry instances since they are not saved", () => {
-    expect(() => { BudgetEntry.list() }).toThrow("There are no saved entries!");
+    expect(() => BudgetEntry.list()).toThrow("There are no saved entries!");
 });
 
 test("Successfully return the current total expense", () => {
@@ -81,7 +81,7 @@ test("Successfully return the current total expense", () => {
 });
 
 test("Fail to return the current total expense due to not having a save file", () => {
-    expect(() => { BudgetEntry.balance() }).toThrow("There are no saved entries!");
+    expect(() => BudgetEntry.balance()).toThrow("There are no saved entries!");
 });
 
 test("Successfully list all of the entries from a given year and month", () => {
@@ -92,5 +92,15 @@ test("Successfully list all of the entries from a given year and month", () => {
 });
 
 test("Fail to return the list of all entries from a given year and month to due not having a save file", () => {
-    expect(() => (BudgetEntry.listByMonth("2021-02"))).toThrow("There are no saved entries!");
+    expect(() => BudgetEntry.listByMonth("2021-02")).toThrow("There are no saved entries!");
+});
+
+test("Sucessfully return the total expense of a given time period", () => {
+    testEntry.save();
+    const balanceByMonth = BudgetEntry.balanceByMonth("2021-02");
+    expect(balanceByMonth).toEqual(testEntry.amount);
+});
+
+test("Fail to return the total expense of a given time period due to not having a save file", () => {
+    expect(() => BudgetEntry.balanceByMonth("2021-02")).toThrow("There are no saved entries!");
 });
