@@ -4,7 +4,10 @@ import { printTable } from "console-table-printer";
 import { BudgetEntry } from "./models/budget-entry";
 
 // version of the CLI app
-yargs.version("0.0.b1");
+yargs.version("0.0.1");
+
+// name of the CLI command
+yargs.scriptName("budgetapp");
 
 // CLI command for the add functionality
 yargs.command(
