@@ -12,7 +12,7 @@ interface BudgetEntry {
  * Save a BudgetEntry instance into a JSON save file.
  * @param {BudgetEntry} entry - A new BudgetEntry instance 
  */
-export function saveBudgetEntry(entry: BudgetEntry) {
+export function saveEntry(entry: BudgetEntry) {
     try {
         let savedEntries: BudgetEntry[];
         if (existsSync("save_file.json")) savedEntries = parseEntries();
@@ -24,13 +24,24 @@ export function saveBudgetEntry(entry: BudgetEntry) {
     }
 }
 
-export function updateEntry(entry: string, newEntryDetails: {
+export function updateEntry(
+    entryTitle: string,
+    newEntryDetails: {
     title?: string,
     amount?: number,
     currency?: string,
     date?: string,
     recurring?: boolean
-})
+}) {
+    try {
+        let savedEntries: BudgetEntry[] = parseEntries();
+        let entry: BudgetEntry | undefined = savedEntries.find(entry => entry.title === entryTitle);
+        if (entry) updateEntryDetails(entry, newEntryDetails);
+        writeFileSync("save_file.json", JSON.stringify(savedEntries, null, "\t"));
+    } catch (error) {
+        throw error;
+    }
+}
 
 /**
  * Read and parse all of the saved budget entries.
@@ -42,8 +53,25 @@ function parseEntries(): BudgetEntry[] {
         const entries: BudgetEntry[] = JSON.parse(readFileSync("save_file.json", { encoding: "utf8" }));
         return entries;
     } else {
-        throw new Error("There are no saved Entries!");
+        throw new Error("There are no saved entries!");
     }
+}
+
+function updateEntryDetails(
+    entry: BudgetEntry,
+    newEntryDetails:{
+        title?: string,
+        amount?: number,
+        currency?: string,
+        date?: string,
+        recurring?: boolean    
+    }
+) {
+    entry.title = newEntryDetails.title ? newEntryDetails.title : entry.title;
+    entry.amount = newEntryDetails.amount ? newEntryDetails.amount : entry.amount;
+    entry.currency = newEntryDetails.currency ? newEntryDetails.currency : entry.currency;
+    entry.date = newEntryDetails.date ? newEntryDetails.date : entry.date;
+    entry.recurring = newEntryDetails.recurring ? newEntryDetails.recurring : entry.recurring;
 }
 
 // export class BudgetEntry {
@@ -53,21 +81,6 @@ function parseEntries(): BudgetEntry[] {
 //     currency: string;
 //     date?: string;
 //     recurring: boolean;
-
-//     save() {
-//         try {
-//             let savedEntries: BudgetEntry[];
-//             if (existsSync("save_file.json")) {
-//                 savedEntries = BudgetEntry.parseEntries();
-//             } else {
-//                 savedEntries = [];
-//             }
-//             savedEntries.push(this);
-//             writeFileSync("save_file.json", JSON.stringify(savedEntries, null, "\t"));
-//         } catch (error) {
-//             throw error;
-//         }
-//     }
 
 //     /**
 //      * @static
