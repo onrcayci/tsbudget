@@ -24,6 +24,16 @@ export function saveEntry(entry: BudgetEntry) {
     }
 }
 
+/**
+ * Update a saved BudgetEntry instance.
+ * @param {string} entryTitle - The title of the saved entry.
+ * @param newEntryDetails - Details that will be updated.
+ * @param {string | undefined} newEntryDetails.title - New title of the saved entry.
+ * @param {number | undefined} newEntryDetails.amount - New amount of the saved entry.
+ * @param {string | undefined} newEntryDetails.currency - New currency of the saved entry.
+ * @param {string | undefined} newEntryDetails.date - New date of the saved entry.
+ * @param {boolean | undefined} newEntryDetails.recurring - New state of the entry showing if the expense is recurring or one time.
+ */
 export function updateEntry(
     entryTitle: string,
     newEntryDetails: {
@@ -43,6 +53,10 @@ export function updateEntry(
     }
 }
 
+/**
+ * Delete a saved entry from the save file.
+ * @param {string} entryTitle - Title of the entry to be deleted.
+ */
 export function deleteEntry(entryTitle: string) {
     try {
         let savedEntries: BudgetEntry[] = parseEntries();
@@ -67,6 +81,16 @@ function parseEntries(): BudgetEntry[] {
     }
 }
 
+/**
+ * Update the entries of a given entry.
+ * @param {BudgetEntry} entry - The entry that will be updated. 
+ * @param newEntryDetails - New details of the entry.
+ * @param {string | undefined} newEntryDetails.title - New title of the saved entry.
+ * @param {number | undefined} newEntryDetails.amount - New amount of the saved entry.
+ * @param {string | undefined} newEntryDetails.currency - New currency of the saved entry.
+ * @param {string | undefined} newEntryDetails.date - New date of the saved entry.
+ * @param {boolean | undefined} newEntryDetails.recurring - New state of the entry showing if the expense is recurring or one time.
+ */
 function updateEntryDetails(
     entry: BudgetEntry,
     newEntryDetails:{
@@ -85,39 +109,6 @@ function updateEntryDetails(
 }
 
 // export class BudgetEntry {
-
-//     title: string;
-//     amount: number;
-//     currency: string;
-//     date?: string;
-//     recurring: boolean;
-
-//     /**
-//      * @static
-//      * Update the details of a saved BudgetEntry instance
-//      * @param {string} entryTitle 
-//      * @param update - A JSON object which includes updates for:
-//      * @param {string | undefined} update.title
-//      * @param {number | undefined} update.amount
-//      * @param {string | undefined} update.currency
-//      * @param {string | undefined} update.date
-//      * @param {boolean | undefined} update.recurring
-//      */
-
-//     /**
-//      * @static
-//      * Delete a BudgetEntry instance by its title.
-//      * @param {string} entryTitle
-//      */
-//     static delete(entryTitle: string) {
-//         try {
-//             let savedEntries: BudgetEntry[] = this.parseEntries();
-//             savedEntries = savedEntries.filter((entry) => entry.title !== entryTitle);
-//             writeFileSync("save_file.json", JSON.stringify(savedEntries, null, "\t"));
-//         } catch (error) {
-//             throw error;
-//         }
-//     }
 
 //     /**
 //      * @static
@@ -189,53 +180,5 @@ function updateEntryDetails(
 //             throw error;
 //         }
 
-//     }
-
-//     /**
-//      * @private
-//      * @static
-//      * Convert the saved JSON entries into BudgetEntry instances.
-//      * @returns {BudgetEntry[]} - A list of saved BudgetEntry instances.
-//      */
-//     private static parseEntries(): BudgetEntry[] {
-//         if (existsSync("save_file.json")) {
-//         let entries: BudgetEntry[] = [];
-//             const parsedEntries: BudgetEntryInterface[] = JSON.parse(readFileSync("save_file.json", { encoding: "utf8" }));
-//             parsedEntries.forEach((entry: BudgetEntryInterface) => {
-//                 let budgetEntry: BudgetEntry = new BudgetEntry(entry);
-//                 entries.push(budgetEntry);
-//             });
-//             return entries;
-//         } else {
-//             throw new Error("There are no saved entries!");
-//         }
-//     }
-
-//     /**
-//      * @private
-//      * @static
-//      * Update the attributes of a given BudgetEntry instance.
-//      * @param {BudgetEntry | BudgetEntryInterface} entry 
-//      * @param update
-//      * @param {string | undefined} update.title
-//      * @param {number | undefined} update.amount
-//      * @param {string | undefined} update.currency
-//      * @param {string | undefined} update.date
-//      * @param {boolean | undefined} update.recurring
-//      */
-//     private static updateEntry(
-//         entry: BudgetEntry | BudgetEntryInterface, 
-//         update: {
-//             title?: string,
-//             amount?: number,
-//             currency?: string,
-//             date?: string,
-//             recurring?: boolean
-//     }) {
-//         entry.title = update.title ? update.title : entry.title;
-//         entry.amount = update.amount ? update.amount : entry.amount;
-//         entry.currency = update.currency ? update.currency : entry.currency;
-//         entry.date = update.date ? update.date : entry.date;
-//         entry.recurring = update.recurring ? update.recurring : entry.recurring;
 //     }
 // }
