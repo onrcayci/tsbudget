@@ -1,7 +1,7 @@
 import yargs from "yargs";
-import { printTable } from "console-table-printer";
+// import { printTable } from "console-table-printer";
 
-import { BudgetEntry } from "./models/budget-entry";
+import { saveEntry, updateEntry } from "./models/budget-entry";
 
 // version of the CLI app
 yargs.version("0.0.b1");
@@ -37,15 +37,8 @@ yargs.command(
                 describe: "Date of the entry as a UTC string. E.g. 2021-01-01."
             });
     }, (argv) => {
-        const newEntry = new BudgetEntry({
-            title: argv.title,
-            amount: argv.amount,
-            currency: argv.currency,
-            date: argv.date,
-            recurring: argv.recurring
-        });
         try {
-            newEntry.save();
+            saveEntry(argv);
         } catch (error) {
             throw error;
         }
@@ -82,7 +75,7 @@ yargs.command("update <entry> [title] [amount] [currency] [date] [recurring]", "
         });
 }, (argv) => {
     try {
-        BudgetEntry.update(argv.entry, {
+        updateEntry(argv.entry, {
             title: argv.title,
             amount: argv.amount,
             currency: argv.currency,
@@ -95,64 +88,64 @@ yargs.command("update <entry> [title] [amount] [currency] [date] [recurring]", "
 });
 
 // CLI command for list functionality
-yargs.command("list [time]", "List all of the entries or entries belong to a specific time period", (yargs) => {
-    return yargs
-        .option("time", {
-            type: "string",
-            describe: "Year and month of the time period in UTC format. E.g. 2021-01 for 2021 January."
-        });
-}, (argv) => {
-    try {
-        let entries: BudgetEntry[] = [];
-        if (argv.time) entries = BudgetEntry.listByMonth(argv.time);
-        else entries = BudgetEntry.list();
-        printTable(entries);
-    } catch (error) {
-        throw error;
-    }
-});
+// yargs.command("list [time]", "List all of the entries or entries belong to a specific time period", (yargs) => {
+//     return yargs
+//         .option("time", {
+//             type: "string",
+//             describe: "Year and month of the time period in UTC format. E.g. 2021-01 for 2021 January."
+//         });
+// }, (argv) => {
+//     try {
+//         let entries: BudgetEntry[] = [];
+//         if (argv.time) entries = BudgetEntry.listByMonth(argv.time);
+//         else entries = BudgetEntry.list();
+//         printTable(entries);
+//     } catch (error) {
+//         throw error;
+//     }
+// });
 
 // CLI command for delete functionality
-yargs.command("delete <entry>", "Delete the entry with the given title", (yargs) => {
-    return yargs
-        .positional("entry", {
-            type: "string",
-            describe: "Title of the entry to be deleted",
-            demandOption: true
-        });
-}, (argv) => {
-    try {
-        BudgetEntry.delete(argv.entry);
-    } catch (error) {
-        throw error;
-    }
-});
+// yargs.command("delete <entry>", "Delete the entry with the given title", (yargs) => {
+//     return yargs
+//         .positional("entry", {
+//             type: "string",
+//             describe: "Title of the entry to be deleted",
+//             demandOption: true
+//         });
+// }, (argv) => {
+//     try {
+//         BudgetEntry.delete(argv.entry);
+//     } catch (error) {
+//         throw error;
+//     }
+// });
 
 // CLI command for balance functionality
-yargs.command("balance [currency] [time]", "Show the total expenses", (yargs) => {
-    return yargs
-        .option("currency", {
-            type: "string",
-            default: "CAD"
-        })
-        .option("time", {
-            type: "string",
-            describe: "Year and month of the time period in UTC format. E.g. 2021-01 for 2021 January."
-        });
-}, (argv) => {
-    try {
-        let expense = 0;
-        if (argv.time) {
-            expense = BudgetEntry.balanceByMonth(argv.time);
-            console.log("Total Outstanding Expenses of " + argv.time + ": " + expense + " " + argv.currency);
-        } else {
-            expense = BudgetEntry.balance();
-            console.log("Total Outstanding Expenses: " + expense + " " + argv.currency);
-        }
-    } catch (error) {
-        throw error;
-    }
-});
+// yargs.command("balance [currency] [time]", "Show the total expenses", (yargs) => {
+//     return yargs
+//         .option("currency", {
+//             type: "string",
+//             default: "CAD"
+//         })
+//         .option("time", {
+//             type: "string",
+//             describe: "Year and month of the time period in UTC format. E.g. 2021-01 for 2021 January."
+//         });
+// }, (argv) => {
+//     try {
+//         let expense = 0;
+//         if (argv.time) {
+//             expense = BudgetEntry.balanceByMonth(argv.time);
+//             console.log("Total Outstanding Expenses of " + argv.time + ": " + expense + " " + argv.currency);
+//         } else {
+//             expense = BudgetEntry.balance();
+//             console.log("Total Outstanding Expenses: " + expense + " " + argv.currency);
+//         }
+//     } catch (error) {
+//         throw error;
+//     }
+// });
 
 // parse the incoming CLI arguments in order to determine which CLI command to execute
 yargs.parse();
