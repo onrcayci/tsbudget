@@ -43,6 +43,16 @@ export function updateEntry(
     }
 }
 
+export function deleteEntry(entryTitle: string) {
+    try {
+        let savedEntries: BudgetEntry[] = parseEntries();
+        savedEntries = savedEntries.filter((entry) => entry.title !== entryTitle);
+        writeFileSync("save_file.json", JSON.stringify(savedEntries, null, "\t"));
+    } catch (error) {
+        throw error;
+    }
+}
+
 /**
  * Read and parse all of the saved budget entries.
  * @returns {BudgetEntry[]} - A list of saved budget entries.
@@ -93,24 +103,6 @@ function updateEntryDetails(
 //      * @param {string | undefined} update.date
 //      * @param {boolean | undefined} update.recurring
 //      */
-//     static update(
-//         entryTitle: string,
-//         update: {
-//             title?: string,
-//             amount?: number,
-//             currency?: string,
-//             date?: string,
-//             recurring?: boolean
-//     }) {
-//         try {
-//             let savedEntries: BudgetEntry[] = this.parseEntries();
-//             let oldSavedEntry: BudgetEntry | undefined = savedEntries.find((entry) => entry.title === entryTitle);
-//             if (oldSavedEntry) this.updateEntry(oldSavedEntry, update);
-//             writeFileSync("save_file.json", JSON.stringify(savedEntries, null, "\t"));
-//         } catch (error) {
-//             throw error;
-//         }
-//     }
 
 //     /**
 //      * @static

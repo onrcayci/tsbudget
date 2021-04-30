@@ -1,7 +1,7 @@
 import yargs from "yargs";
 // import { printTable } from "console-table-printer";
 
-import { saveEntry, updateEntry } from "./models/budget-entry";
+import { saveEntry, updateEntry, deleteEntry } from "./models/budget-entry";
 
 // version of the CLI app
 yargs.version("0.0.b1");
@@ -106,20 +106,20 @@ yargs.command("update <entry> [title] [amount] [currency] [date] [recurring]", "
 // });
 
 // CLI command for delete functionality
-// yargs.command("delete <entry>", "Delete the entry with the given title", (yargs) => {
-//     return yargs
-//         .positional("entry", {
-//             type: "string",
-//             describe: "Title of the entry to be deleted",
-//             demandOption: true
-//         });
-// }, (argv) => {
-//     try {
-//         BudgetEntry.delete(argv.entry);
-//     } catch (error) {
-//         throw error;
-//     }
-// });
+yargs.command("delete <entry>", "Delete the entry with the given title", (yargs) => {
+    return yargs
+        .positional("entry", {
+            type: "string",
+            describe: "Title of the entry to be deleted",
+            demandOption: true
+        });
+}, (argv) => {
+    try {
+        deleteEntry(argv.entry);
+    } catch (error) {
+        throw error;
+    }
+});
 
 // CLI command for balance functionality
 // yargs.command("balance [currency] [time]", "Show the total expenses", (yargs) => {

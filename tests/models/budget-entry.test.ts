@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, rmSync } from "fs";
 
-import { saveEntry, updateEntry } from "../../src/models/budget-entry";
+import { saveEntry, updateEntry, deleteEntry } from "../../src/models/budget-entry";
 
 let  testEntry = {
     title: "Test Entry",
@@ -37,16 +37,16 @@ test("Fail to update a BudgetEntry which is not saved", () => {
     expect(() => updateEntry(testEntry.title, { title: "Updated Title" })).toThrow("There are no saved entries!");
 })
 
-// test("Successfully delete a saved BudgetEntry instance", () => {
-//     testEntry.save();
-//     BudgetEntry.delete(testEntry.title);
-//     const savedEntries: BudgetEntry[] = JSON.parse(readFileSync("save_file.json", { encoding: "utf8" }));
-//     expect(savedEntries.length).toEqual(0);
-// });
+test("Successfully delete a saved BudgetEntry instance", () => {
+    saveEntry(testEntry);
+    deleteEntry(testEntry.title);
+    const savedEntries = JSON.parse(readFileSync("save_file.json", { encoding: "utf8" }));
+    expect(savedEntries.length).toEqual(0);
+});
 
-// test("Fail to delete a BudgetEntry which is not saved", () => {
-//     expect(() => BudgetEntry.delete(testEntry.title)).toThrow("There are no saved entries!");
-// });
+test("Fail to delete a BudgetEntry which is not saved", () => {
+    expect(() => deleteEntry(testEntry.title)).toThrow("There are no saved entries!");
+});
 
 // test("Successfully list all saved BudgetEntry instances", () => {
 //     testEntry.save();
