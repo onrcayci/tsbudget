@@ -68,6 +68,60 @@ export function deleteEntry(entryTitle: string) {
 }
 
 /**
+ * List all of the saved entries.
+ * @returns {BudgetEntry[]} - The list of saved budget entries.
+ */
+export function listEntries(): BudgetEntry[] {
+    if (existsSync("save_file.json")) return parseEntries();
+    return [];
+}
+
+/**
+ * The current total amount of all of the entries.
+ * @returns {number} - the current total amount of the entries.
+ */
+export function totalExpense(): number {
+    let total = 0;
+    if (existsSync("save_file.json")) {
+        const entries: BudgetEntry[] = parseEntries();
+        entries.forEach(entry => total += entry.amount);
+    }
+    return total;
+}
+
+/**
+ * List all of the entries from a given year and month.
+ * @param {string} timePeriod - The queried year and month in UTC format, e.g., January 2000 == "2000-01".
+ * @returns {BudgetEntry[]} - The list of all of the entries from the queried year and month.
+ */
+export function listEntriesByPeriod(timePeriod: string): BudgetEntry[] {
+    const entries: BudgetEntry[] = listEntries();
+    return entries.filter((entry) => {
+        if (entry.date) {
+            const entryDate: Date = new Date(entry.date);
+            const queryPeriod: Date = new Date(timePeriod);
+            return (entryDate.getFullYear() === queryPeriod.getFullYear() && entryDate.getMonth() === queryPeriod.getMonth());
+        } else if (entry.recurring) {
+            return true;
+        } else {
+            return false;
+        }
+    });
+}
+
+/**
+ * The current total amount of the entries in a given year and month.
+ * @param {string} timePeriod - The queried year and month in UTC format, e.g., January 2000 == "2000-01".
+ * @returns {number} - The current total amount of the entries from the queried year and month.
+ */
+export function totalExpenseByPeriod(timePeriod: string): number {
+    let total = 0;
+    const entries: BudgetEntry[] = listEntriesByPeriod(timePeriod);
+    entries.forEach((entry) => total += entry.amount);
+    return total;
+}
+
+/**
  * Read and parse all of the saved budget entries.
  * @returns {BudgetEntry[]} - A list of saved budget entries.
  * @throws {Error} - if there is no save file, throws "There are no saved Entries!" error.
@@ -107,78 +161,3 @@ function updateEntryDetails(
     entry.date = newEntryDetails.date ? newEntryDetails.date : entry.date;
     entry.recurring = newEntryDetails.recurring ? newEntryDetails.recurring : entry.recurring;
 }
-
-// export class BudgetEntry {
-
-//     /**
-//      * @static
-//      * Return a list of all of the saved BudgetEntry instances.
-//      * @returns {BudgetEntry[]} - Array of BudgetEntry instances.
-//      */
-//     static list(): BudgetEntry[] {
-//         try {
-//             return this.parseEntries();
-//         } catch (error) {
-//             throw error;
-//         }
-//     }
-
-//     /**
-//      * @static
-//      * Return the total amount of all of the saved BudgetEntry instances.
-//      * @returns {number} - the total amount of all of the entries.
-//      */
-//     static balance(): number {
-//         try {
-//             const savedEntries: BudgetEntry[] = this.parseEntries();
-//             let totalExpense: number = 0;
-//             savedEntries.forEach((entry) => totalExpense += entry.amount);
-//             return totalExpense;
-//         } catch (error) {
-//             throw error;
-//         }
-//     }
-
-//     /**
-//      * @static
-//      * Return a list of entries that are in the specified time period.
-//      * @param {string} yearMonth - The year and the month of the time period. 
-//      * @returns {BudgetEntry[]} - The list of entries in the specified time period.
-//      */
-//     static listByMonth(yearMonth: string): BudgetEntry[] {
-//         try {
-//             const queryPeriod = new Date(yearMonth + "-01");
-//             let entries: BudgetEntry[] = this.parseEntries().filter((entry) => {
-//                 if (entry.date) {
-//                     const entryDate = new Date(entry.date);
-//                     return (
-//                         entryDate.getFullYear() === queryPeriod.getFullYear() && entryDate.getMonth() === queryPeriod.getMonth()
-//                     );
-//                 } else {
-//                     return entry.recurring == true;
-//                 }
-//             });
-//             return entries;
-//         } catch (error) {
-//             throw error;
-//         }
-//     }
-
-//     /**
-//      * @static
-//      * Return the up-to-date balance of the specified time period.
-//      * @param {string} yearMonth - The year and the month of the time period.
-//      * @returns {number} - The total amount of the entries in the specified time period.
-//      */
-//     static balanceByMonth(yearMonth: string): number {
-//         try {
-//             const entries: BudgetEntry[] = this.listByMonth(yearMonth);
-//             let monthlyExpense: number = 0;
-//             entries.forEach((entry) => monthlyExpense += entry.amount);
-//             return monthlyExpense;
-//         } catch (error) {
-//             throw error;
-//         }
-
-//     }
-// }
