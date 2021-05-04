@@ -1,6 +1,6 @@
 {
-  "name": "budget_ts",
-  "version": "0.0.1",
+  "name": "tsbudget",
+  "version": "0.0.2",
   "description": "",
   "main": "bin/main.js",
   "preferGlobal": true,

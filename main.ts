@@ -12,10 +12,10 @@ import {
 } from "./entry/budget-entry";
 
 // version of the CLI app
-yargs.version("0.0.1");
+yargs.version("0.0.2");
 
 // name of the CLI command
-yargs.scriptName("budgetapp");
+yargs.scriptName("tsbudget");
 
 // CLI command for the add functionality
 yargs.command(
