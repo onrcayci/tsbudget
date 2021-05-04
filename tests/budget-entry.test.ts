@@ -8,7 +8,7 @@ import {
     totalExpense,
     listEntriesByPeriod,
     totalExpenseByPeriod
-} from "../../src/models/budget-entry";
+} from "../entry/budget-entry";
 
 let  testEntry = {
     title: "Test Entry",
@@ -33,7 +33,7 @@ test("Successfully save a created BudgetEntry instance", () => {
     expect(savedEntries[0].recurring).toBeFalsy();
 });
 
-test("Sucessfully update a saved BudgetEntry instance", () => {
+test("Successfully update a saved BudgetEntry instance", () => {
     saveEntry(testEntry);
     updateEntry(testEntry.title, { title: "Updated Title" });
     const savedEntries = JSON.parse(readFileSync("save_file.json", { encoding: "utf8" }));
@@ -91,7 +91,7 @@ test("Successfully return an empty list if there are no saved entries", () => {
     expect(entries.length).toEqual(0);
 });
 
-test("Sucessfully return the total expense of a given time period", () => {
+test("Successfully return the total expense of a given time period", () => {
     saveEntry(testEntry);
     const balanceByMonth = totalExpenseByPeriod("2021-01");
     expect(balanceByMonth).toEqual(testEntry.amount);
