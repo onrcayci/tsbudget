@@ -9,7 +9,7 @@ import {
     totalExpense,
     listEntriesByPeriod,
     totalExpenseByPeriod
-} from "./models/budget-entry";
+} from "./entry/budget-entry";
 
 // version of the CLI app
 yargs.version("0.0.1");
