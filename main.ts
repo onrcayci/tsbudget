@@ -51,7 +51,13 @@ yargs.command(
             });
     }, (argv) => {
         try {
-            saveEntry(argv);
+            saveEntry({
+                title: argv.title,
+                amount: argv.amount,
+                currency: argv.currency,
+                recurring: argv.recurring,
+                date: argv.date
+            });
         } catch (error) {
             throw error;
         }
