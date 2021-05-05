@@ -1,10 +1,23 @@
+#!/usr/bin/env node
+
 import yargs from "yargs";
 import { printTable } from "console-table-printer";
 
-import { BudgetEntry } from "./models/budget-entry";
+import {
+    saveEntry,
+    updateEntry,
+    deleteEntry,
+    listEntries,
+    totalExpense,
+    listEntriesByPeriod,
+    totalExpenseByPeriod
+} from "./entry/budget-entry";
 
 // version of the CLI app
-yargs.version("0.0.b1");
+yargs.version("0.0.2");
+
+// name of the CLI command
+yargs.scriptName("tsbudget");
 
 // CLI command for the add functionality
 yargs.command(
@@ -37,15 +50,14 @@ yargs.command(
                 describe: "Date of the entry as a UTC string. E.g. 2021-01-01."
             });
     }, (argv) => {
-        const newEntry = new BudgetEntry({
-            title: argv.title,
-            amount: argv.amount,
-            currency: argv.currency,
-            date: argv.date,
-            recurring: argv.recurring
-        });
         try {
-            newEntry.save();
+            saveEntry({
+                title: argv.title,
+                amount: argv.amount,
+                currency: argv.currency,
+                recurring: argv.recurring,
+                date: argv.date
+            });
         } catch (error) {
             throw error;
         }
@@ -82,7 +94,7 @@ yargs.command("update <entry> [title] [amount] [currency] [date] [recurring]", "
         });
 }, (argv) => {
     try {
-        BudgetEntry.update(argv.entry, {
+        updateEntry(argv.entry, {
             title: argv.title,
             amount: argv.amount,
             currency: argv.currency,
@@ -103,9 +115,9 @@ yargs.command("list [time]", "List all of the entries or entries belong to a spe
         });
 }, (argv) => {
     try {
-        let entries: BudgetEntry[] = [];
-        if (argv.time) entries = BudgetEntry.listByMonth(argv.time);
-        else entries = BudgetEntry.list();
+        let entries;
+        if (argv.time) entries = listEntriesByPeriod(argv.time);
+        else entries = listEntries();
         printTable(entries);
     } catch (error) {
         throw error;
@@ -122,7 +134,7 @@ yargs.command("delete <entry>", "Delete the entry with the given title", (yargs)
         });
 }, (argv) => {
     try {
-        BudgetEntry.delete(argv.entry);
+        deleteEntry(argv.entry);
     } catch (error) {
         throw error;
     }
@@ -143,10 +155,10 @@ yargs.command("balance [currency] [time]", "Show the total expenses", (yargs) =>
     try {
         let expense = 0;
         if (argv.time) {
-            expense = BudgetEntry.balanceByMonth(argv.time);
+            expense = totalExpenseByPeriod(argv.time);
             console.log("Total Outstanding Expenses of " + argv.time + ": " + expense + " " + argv.currency);
         } else {
-            expense = BudgetEntry.balance();
+            expense = totalExpense();
             console.log("Total Outstanding Expenses: " + expense + " " + argv.currency);
         }
     } catch (error) {
